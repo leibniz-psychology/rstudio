@@ -18,6 +18,7 @@
 #include <shared_core/Error.hpp>
 
 #include <core/http/TcpIpAsyncServer.hpp>
+#include <core/http/LocalStreamAsyncServer.hpp>
 
 #include <server/ServerOptions.hpp>
 
@@ -28,18 +29,33 @@ namespace server {
 
 http::AsyncServer* httpServerCreate(const http::Headers& additionalHeaders)
 {
-   return new http::TcpIpAsyncServer("RStudio",
-                                     std::string(),
-                                     !options().wwwEnableOriginCheck(),
-                                     options().wwwAllowedOrigins(),
-                                     additionalHeaders);
+   if (options().wwwSocket() != "") {
+      return new http::LocalStreamAsyncServer("RStudio",
+                                        std::string(),
+                                        core::FileMode::USER_READ_WRITE,
+                                        !options().wwwEnableOriginCheck(),
+                                        options().wwwAllowedOrigins(),
+                                        additionalHeaders);
+   } else {
+      return new http::TcpIpAsyncServer("RStudio",
+                                        std::string(),
+                                        !options().wwwEnableOriginCheck(),
+                                        options().wwwAllowedOrigins(),
+                                        additionalHeaders);
+   }
 }
 
 Error httpServerInit(http::AsyncServer* pAsyncServer)
 {
    Options& options = server::options();
-   return dynamic_cast<http::TcpIpAsyncServer*>(pAsyncServer)->init(
-                                 options.wwwAddress(), options.wwwPort());
+   if (options.wwwSocket() != "") {
+      FilePath streamPath(options.wwwSocket());
+      return dynamic_cast<http::LocalStreamAsyncServer*>(pAsyncServer)->init(
+                                    streamPath);
+   } else {
+      return dynamic_cast<http::TcpIpAsyncServer*>(pAsyncServer)->init(
+                                    options.wwwAddress(), options.wwwPort());
+   }
 }
 
 } // namespace server
