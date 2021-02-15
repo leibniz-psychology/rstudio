@@ -36,7 +36,7 @@ void Options::resolveOverlayOptions()
 
 bool Options::allowOverlay() const
 {
-   return true;
+   return false;
 }
 
 bool Options::supportsDriversLicensing() const
