@@ -129,6 +129,8 @@ core::system::ProcessConfig sessionProcessConfig(
 
    // pass our uid to instruct rsession to limit rpc clients to us and itself
    core::system::Options environment;
+   // Copy existing environment
+   core::system::environment(&environment);
    uid_t uid = core::system::user::currentUserIdentity().userId;
    environment.push_back(std::make_pair(
                            kRStudioLimitRpcClientUid,
