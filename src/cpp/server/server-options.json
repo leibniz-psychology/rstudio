@@ -51,6 +51,13 @@
             "description": "Indicates whether or not the rserver process should run as a daemon."
          },
          {
+            "name": "server-oneshot",
+            "memberName": "serverOneshot_",
+            "type": "bool",
+            "defaultValue": false,
+            "description": "Terminate server when rsession terminates."
+         },
+         {
             "name": "server-pid-file",
             "memberName": "serverPidFile_",
             "type": "string",

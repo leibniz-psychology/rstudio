@@ -210,6 +210,9 @@ core::system::ProcessConfig sessionProcessConfig(
 
 void onProcessExit(const std::string& username, PidType pid)
 {
+   if (server::options().serverOneshot()) {
+      ::kill(::getpid(), SIGINT);
+   }
 }
 
 } // anonymous namespace
